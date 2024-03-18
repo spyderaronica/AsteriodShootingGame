@@ -21,6 +21,7 @@ Asteroids::Asteroids(int argc, char* argv[])
 	mLevel = 0;
 	mAsteroidCount = 0;
 	isGameStart = false;
+	isNameEnter = false;
 }
 
 /** Destructor. */
@@ -86,18 +87,49 @@ void Asteroids::Stop()
 
 void Asteroids::OnKeyPressed(uchar key, int x, int y)
 {
+	if (!getIsNameEnter())
+	{
+		if (key == '\r') {
+			size_t start = playerName.find_first_not_of(" \t\n\r\f\v");
+			if (start != std::string::npos) {
+				size_t end = playerName.find_last_not_of(" \t\n\r\f\v");
+				playerName = playerName.substr(start, end - start + 1);
+				if (!playerName.empty())
+				{
+					isNameEnter = true;
+					mPlayerNameLabel->SetVisible(false);
+					mGameStartLabel->SetVisible(true);
+				}
+			}
+		}
+		else if (key == '\b') { // If Backspace key is pressed
+			if (!playerName.empty()) {
+				playerName.pop_back(); // Remove the last character
+				std::string name_msg = "Enter Name: ";
+				name_msg.append(playerName);
+				mPlayerNameLabel->SetText(name_msg);
+			}
+		}
+		else if (std::isalnum(key) || key == ' ') { // If alphanumeric character or space is pressed
+			playerName += key; // Append the character to the player name
+			std::string name_msg = "Enter Name: ";
+			name_msg.append(playerName);
+			mPlayerNameLabel->SetText(name_msg);
+		}
+	}
 	/* If the game has not started yet(checked via getIsGameStart()),
 	   set the flag indicating that the game has started to true,
 	   and hide the game start label (mGameStartLabel).
 	*/
-	if (!getIsGameStart())
+	else if (!getIsGameStart())
 	{
 		isGameStart = true; // Set the flag indicating the game has started
 		mGameStartLabel->SetVisible(false); // Hide the game start label
+		mScoreLabel->SetVisible(true);
+		mLivesLabel->SetVisible(true);
 		// Create a spaceship and add it to the world
 		mGameWorld->AddObject(CreateSpaceship());
 	}
-
 	else
 	{
 		switch (key)
@@ -191,6 +223,11 @@ bool Asteroids::getIsGameStart()
 	return isGameStart;
 }
 
+bool Asteroids::getIsNameEnter()
+{
+	return isNameEnter;
+}
+
 // PROTECTED INSTANCE METHODS /////////////////////////////////////////////////
 shared_ptr<GameObject> Asteroids::CreateSpaceship()
 {
@@ -233,10 +270,26 @@ void Asteroids::CreateGUI()
 {
 	// Add a (transparent) border around the edge of the game display
 	mGameDisplay->GetContainer()->SetBorder(GLVector2i(10, 10));
+
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mPlayerNameLabel = shared_ptr<GUILabel>(new GUILabel("Enter Name: "));
+	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
+	mPlayerNameLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the label to GUI_VALIGN_MIDDLE
+	mPlayerNameLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
+	// Set the visibility of the label to true (visible)
+	mPlayerNameLabel->SetVisible(true);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> player_name_component
+		= static_pointer_cast<GUIComponent>(mPlayerNameLabel);
+	mGameDisplay->GetContainer()->AddComponent(player_name_component, GLVector2f(0.5f, 0.5f));
+
 	// Create a new GUILabel and wrap it up in a shared_ptr
 	mScoreLabel = make_shared<GUILabel>("Score: 0");
 	// Set the vertical alignment of the label to GUI_VALIGN_TOP
 	mScoreLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_TOP);
+	// Set the visibility of the label to false (hidden)
+	mScoreLabel->SetVisible(false);
 	// Add the GUILabel to the GUIComponent  
 	shared_ptr<GUIComponent> score_component
 		= static_pointer_cast<GUIComponent>(mScoreLabel);
@@ -246,6 +299,8 @@ void Asteroids::CreateGUI()
 	mLivesLabel = make_shared<GUILabel>("Lives: 3");
 	// Set the vertical alignment of the label to GUI_VALIGN_BOTTOM
 	mLivesLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	// Set the visibility of the label to false (hidden)
+	mLivesLabel->SetVisible(false);
 	// Add the GUILabel to the GUIComponent  
 	shared_ptr<GUIComponent> lives_component = static_pointer_cast<GUIComponent>(mLivesLabel);
 	mGameDisplay->GetContainer()->AddComponent(lives_component, GLVector2f(0.0f, 0.0f));
@@ -256,8 +311,8 @@ void Asteroids::CreateGUI()
 	mGameStartLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
 	// Set the vertical alignment of the label to GUI_VALIGN_MIDDLE
 	mGameStartLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
-	// Set the visibility of the label to true (visible)
-	mGameStartLabel->SetVisible(true);
+	// Set the visibility of the label to false (hidden)
+	mGameStartLabel->SetVisible(false);
 	// Add the GUILabel to the GUIContainer  
 	shared_ptr<GUIComponent> game_start_component
 		= static_pointer_cast<GUIComponent>(mGameStartLabel);
@@ -275,7 +330,6 @@ void Asteroids::CreateGUI()
 	shared_ptr<GUIComponent> game_over_component
 		= static_pointer_cast<GUIComponent>(mGameOverLabel);
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
-
 }
 
 void Asteroids::OnScoreChanged(int score)

@@ -48,6 +48,7 @@ public:
 	void OnTimer(int value);
 
 	bool getIsGameStart();
+	bool getIsNameEnter();
 
 private:
 	shared_ptr<Spaceship> mSpaceship;
@@ -55,10 +56,13 @@ private:
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
 	shared_ptr<GUILabel> mGameStartLabel;
+	shared_ptr<GUILabel> mPlayerNameLabel;
 
 	uint mLevel;
 	uint mAsteroidCount;
 	bool isGameStart;
+	bool isNameEnter;
+	std::string playerName;
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
