@@ -22,6 +22,7 @@ Asteroids::Asteroids(int argc, char* argv[])
 	mAsteroidCount = 0;
 	isGameStart = false;
 	isNameEnter = false;
+	data = new SaveAndLoadData("HighScore.txt");
 }
 
 /** Destructor. */
@@ -100,6 +101,11 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 					mPlayerNameLabel->SetVisible(false);
 					mGameStartLabel->SetVisible(true);
 				}
+			}
+			else
+			{
+				mPlayerNameLabel->SetText("Enter Name: ");
+				playerName.erase();
 			}
 		}
 		else if (key == '\b') { // If Backspace key is pressed
@@ -214,18 +220,9 @@ void Asteroids::OnTimer(int value)
 	if (value == SHOW_GAME_OVER)
 	{
 		mGameOverLabel->SetVisible(true);
+		mPlayerDataLabel->SetVisible(true);
 	}
 
-}
-
-bool Asteroids::getIsGameStart()
-{
-	return isGameStart;
-}
-
-bool Asteroids::getIsNameEnter()
-{
-	return isNameEnter;
 }
 
 // PROTECTED INSTANCE METHODS /////////////////////////////////////////////////
@@ -330,6 +327,19 @@ void Asteroids::CreateGUI()
 	shared_ptr<GUIComponent> game_over_component
 		= static_pointer_cast<GUIComponent>(mGameOverLabel);
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
+
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mPlayerDataLabel = shared_ptr<GUILabel>(new GUILabel(""));
+	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
+	mPlayerDataLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the label to GUI_VALIGN_MIDDLE
+	mPlayerDataLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
+	// Set the visibility of the label to false (hidden)
+	mPlayerDataLabel->SetVisible(false);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> player_data_component
+		= static_pointer_cast<GUIComponent>(mPlayerDataLabel);
+	mGameDisplay->GetContainer()->AddComponent(player_data_component, GLVector2f(0.5f, 0.4f));
 }
 
 void Asteroids::OnScoreChanged(int score)
@@ -362,6 +372,20 @@ void Asteroids::OnPlayerKilled(int lives_left)
 	}
 	else
 	{
+		std::pair<std::string, int> playerdata = data->LoadData(playerName);
+		if (playerdata.first.empty())
+		{
+			data->SaveData({ playerName, mScoreKeeper.getScore() });
+			playerdata.first = playerName;
+			playerdata.second = mScoreKeeper.getScore();
+		}
+		else if (playerdata.second < mScoreKeeper.getScore())
+		{
+			data->UpdateData({ playerName, mScoreKeeper.getScore() });
+			playerdata.second = mScoreKeeper.getScore();
+		}
+		std::string datatodisplay = "Name: " + playerdata.first + " & " + "Highscore: " + std::to_string(playerdata.second);
+		mPlayerDataLabel->SetText(datatodisplay);
 		SetTimer(500, SHOW_GAME_OVER);
 	}
 }

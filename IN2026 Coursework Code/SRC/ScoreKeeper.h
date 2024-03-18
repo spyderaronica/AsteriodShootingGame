@@ -20,7 +20,7 @@ public:
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
 		if (object->GetType() == GameObjectType("Asteroid")) {
- 			mScore += 10;
+			mScore += 10;
 			FireScoreChanged();
 		}
 	}
@@ -37,6 +37,8 @@ public:
 			(*lit)->OnScoreChanged(mScore);
 		}
 	}
+
+	int getScore() { return mScore; }
 
 private:
 	int mScore;

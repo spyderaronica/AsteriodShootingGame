@@ -9,6 +9,7 @@
 #include "ScoreKeeper.h"
 #include "Player.h"
 #include "IPlayerListener.h"
+#include "SaveAndLoadData.h"
 
 class GameObject;
 class Spaceship;
@@ -47,8 +48,8 @@ public:
 	// Override the default implementation of ITimerListener ////////////////////
 	void OnTimer(int value);
 
-	bool getIsGameStart();
-	bool getIsNameEnter();
+	bool getIsGameStart() { return isGameStart; }
+	bool getIsNameEnter() { return isNameEnter; }
 
 private:
 	shared_ptr<Spaceship> mSpaceship;
@@ -57,12 +58,14 @@ private:
 	shared_ptr<GUILabel> mGameOverLabel;
 	shared_ptr<GUILabel> mGameStartLabel;
 	shared_ptr<GUILabel> mPlayerNameLabel;
+	shared_ptr<GUILabel> mPlayerDataLabel;
 
 	uint mLevel;
 	uint mAsteroidCount;
 	bool isGameStart;
 	bool isNameEnter;
 	std::string playerName;
+	SaveAndLoadData* data;
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
