@@ -59,8 +59,8 @@ void Asteroids::Start()
 	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
-	// Create a spaceship and add it to the world
-	mGameWorld->AddObject(CreateSpaceship());
+	// Create some asteroids and add them to the world
+	CreateAsteroids(10);
 
 	//Create the GUI
 	CreateGUI();
@@ -92,12 +92,10 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	*/
 	if (!getIsGameStart())
 	{
-		// Set the flag indicating the game has started
-		isGameStart = true;
-		// Hide the game start label
-		mGameStartLabel->SetVisible(false);
-		// Create some asteroids and add them to the world
-		CreateAsteroids(10);
+		isGameStart = true; // Set the flag indicating the game has started
+		mGameStartLabel->SetVisible(false); // Hide the game start label
+		// Create a spaceship and add it to the world
+		mGameWorld->AddObject(CreateSpaceship());
 	}
 
 	else
@@ -117,8 +115,6 @@ void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
 
 void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 {
-	if (!getIsGameStart()) return;
-
 	switch (key)
 	{
 		// If up arrow key is pressed start applying forward thrust
