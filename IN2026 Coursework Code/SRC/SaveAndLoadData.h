@@ -22,6 +22,7 @@ private:
 	std::string filename;
 
 	bool FileExist(std::string filename);
+	bool FileClear();
 };
 
 #endif

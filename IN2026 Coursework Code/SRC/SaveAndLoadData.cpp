@@ -18,7 +18,7 @@ SaveAndLoadData::SaveAndLoadData(std::string filename)
 
 bool SaveAndLoadData::SaveData(std::pair<std::string, int> playerData)
 {
-    // Open the file in read mode
+    // Open the file
     std::fstream file(filename, std::ios::in | std::ios::out);
 
     // Check if the file is opened successfully
@@ -34,15 +34,25 @@ bool SaveAndLoadData::SaveData(std::pair<std::string, int> playerData)
         std::istringstream iss(line);
         std::string name;
         int score;
-        char comma;
-        if (iss >> name >> comma >> score && comma == ',') {
+
+        if (std::getline(iss, name, ',') && iss >> score) {
             tempData.push_back(std::make_pair(name, score));
         }
     }
 
     tempData.push_back(playerData);
 
-    file.clear();
+    file.close();
+
+    FileClear();
+
+    file.open(filename, std::ios::in | std::ios::out);
+
+    // Check if the file is opened successfully
+    if (!file.is_open()) {
+        // File not found or unable to open
+        return false;
+    }
 
     // Write the data to the file
     for (const auto& data : tempData) {
@@ -67,8 +77,8 @@ std::pair<std::string, int> SaveAndLoadData::LoadData(std::string playername)
             std::istringstream iss(line);
             std::string storedPlayerName;
             int playerScore;
-            char comma;
-            if (iss >> storedPlayerName >> comma >> playerScore && comma == ',') {
+
+            if (std::getline(iss, storedPlayerName, ',') && iss >> playerScore) {
                 // Check if the stored player name matches the requested player name
                 if (storedPlayerName == playername) {
                     // Close the file
@@ -90,8 +100,8 @@ std::pair<std::string, int> SaveAndLoadData::LoadData(std::string playername)
 
 bool SaveAndLoadData::UpdateData(std::pair<std::string, int> playerData)
 {
-    // Open the file in read mode
-    std::ifstream file(filename);
+    // Open the file
+    std::fstream file(filename, std::ios::in | std::ios::out);
 
     // Check if the file is opened successfully
     if (!file.is_open()) {
@@ -106,14 +116,11 @@ bool SaveAndLoadData::UpdateData(std::pair<std::string, int> playerData)
         std::istringstream iss(line);
         std::string name;
         int score;
-        char comma;
-        if (iss >> name >> comma >> score && comma == ',') {
+
+        if (std::getline(iss, name, ',') && iss >> score) {
             tempData.push_back(std::make_pair(name, score));
         }
     }
-
-    // Close the file
-    file.close();
 
     // Update the player's data in the temporary vector
     bool found = false;
@@ -125,12 +132,21 @@ bool SaveAndLoadData::UpdateData(std::pair<std::string, int> playerData)
         }
     }
 
+    // Close the file
+    file.close();
+
     // If the player's data was found and updated, write the updated data to the file
     if (found) {
+        FileClear();
 
-        std::fstream file(filename, std::ios::in | std::ios::out);
-        file.clear();
-        file.close();
+        // Open the file
+        file.open(filename, std::ios::in | std::ios::out);
+
+        // Check if the file is opened successfully
+        if (!file.is_open()) {
+            // File not found or unable to open
+            return false;
+        }
 
         // Write the updated data to the file
         for (const auto& data : tempData) {
@@ -139,6 +155,9 @@ bool SaveAndLoadData::UpdateData(std::pair<std::string, int> playerData)
 
         return true;
     }
+
+    // Close the file
+    file.close();
 
     // Player's data not found
     return false;
@@ -152,4 +171,17 @@ bool SaveAndLoadData::FileExist(std::string filename)
 {
     std::ifstream file(filename);
     return file.good();
+}
+
+bool SaveAndLoadData::FileClear()
+{
+    std::ofstream file(filename, std::ofstream::trunc);
+
+    // Check if the file is opened successfully
+    if (file.is_open()) {
+        file.close();
+        return true;
+    }
+
+    return false;
 }
