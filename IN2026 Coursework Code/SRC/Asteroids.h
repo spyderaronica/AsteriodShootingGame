@@ -17,7 +17,7 @@ class GUILabel;
 class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener
 {
 public:
-	Asteroids(int argc, char *argv[]);
+	Asteroids(int argc, char* argv[]);
 	virtual ~Asteroids(void);
 
 	virtual void Start(void);
@@ -47,21 +47,25 @@ public:
 	// Override the default implementation of ITimerListener ////////////////////
 	void OnTimer(int value);
 
+	bool getIsGameStart();
+
 private:
 	shared_ptr<Spaceship> mSpaceship;
 	shared_ptr<GUILabel> mScoreLabel;
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
+	shared_ptr<GUILabel> mGameStartLabel;
 
 	uint mLevel;
 	uint mAsteroidCount;
+	bool isGameStart;
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
 	void CreateGUI();
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
-	
+
 	const static uint SHOW_GAME_OVER = 0;
 	const static uint START_NEXT_LEVEL = 1;
 	const static uint CREATE_NEW_PLAYER = 2;
