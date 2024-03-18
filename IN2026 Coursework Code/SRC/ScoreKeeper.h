@@ -40,6 +40,12 @@ public:
 
 	int getScore() { return mScore; }
 
+	void ResetScore()
+	{
+		mScore = 0;
+		FireScoreChanged();
+	}
+
 private:
 	int mScore;
 
