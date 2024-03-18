@@ -67,6 +67,7 @@ private:
 	uint mAsteroidCount;
 	bool isGameStart;
 	bool isNameEnter;
+	bool isDemo;
 	std::string playerName;
 	SaveAndLoadData* data;
 
@@ -75,10 +76,14 @@ private:
 	void CreateGUI();
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
+	void RotateSpaceship(int value);
+	void ShootAsteriod();
 
 	const static uint SHOW_GAME_OVER = 0;
 	const static uint START_NEXT_LEVEL = 1;
 	const static uint CREATE_NEW_PLAYER = 2;
+	const static uint ROTATE_SPACESHIP = 3;
+	const static uint SHOOT_ASTERIOD = 4;
 
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;

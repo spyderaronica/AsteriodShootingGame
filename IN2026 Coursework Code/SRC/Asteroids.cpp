@@ -22,6 +22,7 @@ Asteroids::Asteroids(int argc, char* argv[])
 	mAsteroidCount = 0;
 	isGameStart = false;
 	isNameEnter = false;
+	isDemo = true;
 	data = new SaveAndLoadData("HighScore.txt");
 }
 
@@ -61,6 +62,8 @@ void Asteroids::Start()
 	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
+	mGameWorld->AddObject(CreateSpaceship());
+
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
@@ -75,6 +78,10 @@ void Asteroids::Start()
 
 	// Start the game
 	GameSession::Start();
+
+	mSpaceship->Thrust(10);
+	RotateSpaceship(90);
+	ShootAsteriod();
 }
 
 /** Stop the current game. */
@@ -88,7 +95,7 @@ void Asteroids::Stop()
 
 void Asteroids::OnKeyPressed(uchar key, int x, int y)
 {
-	if (!getIsNameEnter())
+	if (!getIsNameEnter() && isDemo)
 	{
 		if (key == '\r') {
 			// Find the first non-whitespace character from the beginning
@@ -129,8 +136,13 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	   set the flag indicating that the game has started to true,
 	   and hide the game start label (mGameStartLabel).
 	*/
-	else if (!getIsGameStart())
+	else if (!getIsGameStart() && isDemo)
 	{
+		isDemo = false;
+		mScoreKeeper.ResetScore();
+		mPlayer.Resetlives();
+		mSpaceship->SelfDestroy();
+
 		isGameStart = true; // Set the flag indicating the game has started
 		mGameStartLabel->SetVisible(false); // Hide the game start label
 		mScoreLabel->SetVisible(true);
@@ -155,7 +167,7 @@ void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
 
 void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 {
-	if (!getIsGameStart()) return;
+	if (!getIsGameStart() && isDemo) return;
 
 	switch (key)
 	{
@@ -172,7 +184,7 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 
 void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 {
-	if (!getIsGameStart()) return;
+	if (!getIsGameStart() && isDemo) return;
 
 	switch (key)
 	{
@@ -229,6 +241,15 @@ void Asteroids::OnTimer(int value)
 		mPlayerDataLabel->SetVisible(true);
 	}
 
+	if (value == ROTATE_SPACESHIP)
+	{
+		RotateSpaceship(90);
+	}
+
+	if (value == SHOOT_ASTERIOD)
+	{
+		ShootAsteriod();
+	}
 }
 
 // PROTECTED INSTANCE METHODS /////////////////////////////////////////////////
@@ -365,6 +386,12 @@ void Asteroids::OnPlayerKilled(int lives_left)
 	explosion->SetRotation(mSpaceship->GetRotation());
 	mGameWorld->AddObject(explosion);
 
+	if (isDemo)
+	{
+		SetTimer(1000, CREATE_NEW_PLAYER);
+		return;
+	}
+
 	// Format the lives left message using an string-based stream
 	std::ostringstream msg_stream;
 	msg_stream << "Lives: " << lives_left;
@@ -406,4 +433,20 @@ shared_ptr<GameObject> Asteroids::CreateExplosion()
 	explosion->SetSprite(explosion_sprite);
 	explosion->Reset();
 	return explosion;
+}
+
+void Asteroids::RotateSpaceship(int value)
+{
+	if (!isDemo) return;
+
+	mSpaceship->Rotate(value);
+	SetTimer(500, ROTATE_SPACESHIP);
+}
+
+void Asteroids::ShootAsteriod()
+{
+	if (!isDemo) return;
+
+	mSpaceship->Shoot();
+	SetTimer(700, SHOOT_ASTERIOD);
 }
