@@ -91,21 +91,23 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	if (!getIsNameEnter())
 	{
 		if (key == '\r') {
-			size_t start = playerName.find_first_not_of(" \t\n\r\f\v");
-			if (start != std::string::npos) {
-				size_t end = playerName.find_last_not_of(" \t\n\r\f\v");
-				playerName = playerName.substr(start, end - start + 1);
-				if (!playerName.empty())
-				{
-					isNameEnter = true;
-					mPlayerNameLabel->SetVisible(false);
-					mGameStartLabel->SetVisible(true);
-				}
+			// Find the first non-whitespace character from the beginning
+			auto firstNonWhitespace = std::find_if_not(playerName.begin(), playerName.end(), [](unsigned char c) { return std::isspace(c); });
+
+			// Find the first non-whitespace character from the end
+			auto lastNonWhitespace = std::find_if_not(playerName.rbegin(), playerName.rend(), [](unsigned char c) { return std::isspace(c); }).base();
+
+			playerName = (firstNonWhitespace < lastNonWhitespace) ? std::string(firstNonWhitespace, lastNonWhitespace) : std::string();
+
+			if (playerName != std::string()) {
+				isNameEnter = true;
+				mPlayerNameLabel->SetVisible(false);
+				mGameStartLabel->SetVisible(true);
 			}
 			else
 			{
 				mPlayerNameLabel->SetText("Enter Name: ");
-				playerName.erase();
+				playerName = std::string();
 			}
 		}
 		else if (key == '\b') { // If Backspace key is pressed
@@ -153,6 +155,8 @@ void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
 
 void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 {
+	if (!getIsGameStart()) return;
+
 	switch (key)
 	{
 		// If up arrow key is pressed start applying forward thrust
@@ -168,6 +172,8 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 
 void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 {
+	if (!getIsGameStart()) return;
+
 	switch (key)
 	{
 		// If up arrow key is released stop applying forward thrust

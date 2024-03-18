@@ -1,6 +1,9 @@
 #ifndef __ASTEROIDS_H__
 #define __ASTEROIDS_H__
 
+#include <algorithm>
+#include <cctype> 
+
 #include "GameUtil.h"
 #include "GameSession.h"
 #include "IKeyboardListener.h"
