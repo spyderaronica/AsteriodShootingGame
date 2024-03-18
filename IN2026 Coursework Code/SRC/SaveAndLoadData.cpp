@@ -7,33 +7,51 @@ SaveAndLoadData::SaveAndLoadData()
 
 SaveAndLoadData::SaveAndLoadData(std::string filename)
 {
-    if (FileExist(filename))
-    {
-        this->filename = filename;
-    }
-    else
+    if (!FileExist(filename))
     {
         // Create a file object and open the file for writing
         std::fstream file(filename, std::ios::out);
         file.close();
     }
+    this->filename = filename;
 }
 
 bool SaveAndLoadData::SaveData(std::pair<std::string, int> playerData)
 {
-    // Open the file for writing in append mode
-    std::ofstream file(filename, std::ios::app);
+    // Open the file in read mode
+    std::fstream file(filename, std::ios::in | std::ios::out);
 
-    // Check if the file is successfully opened
-    if (file.is_open()) {
-        // Write player's name and score to the file
-        file << playerData.first << "," << playerData.second << std::endl;
-        // Close the file
-        file.close();
-        return true; // Return true indicating success
+    // Check if the file is opened successfully
+    if (!file.is_open()) {
+        // File not found or unable to open
+        return false;
     }
-    else
-        return false; // Return false indicating failure
+
+    // Read the contents of the file and store them in a temporary vector
+    std::vector<std::pair<std::string, int>> tempData;
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string name;
+        int score;
+        char comma;
+        if (iss >> name >> comma >> score && comma == ',') {
+            tempData.push_back(std::make_pair(name, score));
+        }
+    }
+
+    tempData.push_back(playerData);
+
+    file.clear();
+
+    // Write the data to the file
+    for (const auto& data : tempData) {
+        file << data.first << "," << data.second << std::endl;
+    }
+
+    file.close();
+
+    return true;
 }
 
 std::pair<std::string, int> SaveAndLoadData::LoadData(std::string playername)
@@ -73,7 +91,7 @@ std::pair<std::string, int> SaveAndLoadData::LoadData(std::string playername)
 bool SaveAndLoadData::UpdateData(std::pair<std::string, int> playerData)
 {
     // Open the file in read mode
-    std::fstream file(filename, std::ios::in | std::ios::out);
+    std::ifstream file(filename);
 
     // Check if the file is opened successfully
     if (!file.is_open()) {
@@ -81,27 +99,48 @@ bool SaveAndLoadData::UpdateData(std::pair<std::string, int> playerData)
         return false;
     }
 
-    // Search for the player's data in the file
+    // Read the contents of the file and store them in a temporary vector
+    std::vector<std::pair<std::string, int>> tempData;
     std::string line;
     while (std::getline(file, line)) {
-        // Split the line into player name and score
         std::istringstream iss(line);
-        std::string playerName;
+        std::string name;
         int score;
-        iss >> playerName >> score;
-
-        // Check if the player name matches
-        if (playerName == playerData.first) {
-            // Update the score
-            file.seekp(file.tellg()); // Move write position to the current line
-            file << playerData.first << " " << playerData.second << std::endl;
-            file.close(); // Close the file
-            return true; // Data updated successfully
+        char comma;
+        if (iss >> name >> comma >> score && comma == ',') {
+            tempData.push_back(std::make_pair(name, score));
         }
     }
 
-    // Player data not found in the file
-    file.close(); // Close the file
+    // Close the file
+    file.close();
+
+    // Update the player's data in the temporary vector
+    bool found = false;
+    for (auto& data : tempData) {
+        if (data.first == playerData.first) {
+            data.second = playerData.second;
+            found = true;
+            break;
+        }
+    }
+
+    // If the player's data was found and updated, write the updated data to the file
+    if (found) {
+
+        std::fstream file(filename, std::ios::in | std::ios::out);
+        file.clear();
+        file.close();
+
+        // Write the updated data to the file
+        for (const auto& data : tempData) {
+            file << data.first << "," << data.second << std::endl;
+        }
+
+        return true;
+    }
+
+    // Player's data not found
     return false;
 }
 
