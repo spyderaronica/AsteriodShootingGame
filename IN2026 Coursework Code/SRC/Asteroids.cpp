@@ -76,12 +76,12 @@ void Asteroids::Start()
 	// Add this class as a listener of the player
 	mPlayer.AddListener(thisPtr);
 
-	// Start the game
-	GameSession::Start();
-
-	mSpaceship->Thrust(10);
+	mSpaceship->Thrust(2);
 	RotateSpaceship(90);
 	ShootAsteriod();
+
+	// Start the game
+	GameSession::Start();
 }
 
 /** Stop the current game. */
@@ -269,6 +269,9 @@ shared_ptr<GameObject> Asteroids::CreateSpaceship()
 	// Reset spaceship back to centre of the world
 	mSpaceship->Reset();
 	// Return the spaceship so it can be added to the world
+
+	if (isDemo) mSpaceship->Thrust(2);
+
 	return mSpaceship;
 
 }
