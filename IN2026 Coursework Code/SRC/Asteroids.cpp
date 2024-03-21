@@ -340,6 +340,8 @@ void Asteroids::CreateGUI()
 	mGameStartLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
 	// Set the visibility of the label to false (hidden)
 	mGameStartLabel->SetVisible(false);
+	// Set the color to yellow
+	mGameStartLabel->SetColor(GLVector3f(1, 1, 0));
 	// Add the GUILabel to the GUIContainer  
 	shared_ptr<GUIComponent> game_start_component
 		= static_pointer_cast<GUIComponent>(mGameStartLabel);
@@ -353,6 +355,8 @@ void Asteroids::CreateGUI()
 	mGameOverLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
 	// Set the visibility of the label to false (hidden)
 	mGameOverLabel->SetVisible(false);
+	// Set the color to red
+	mGameOverLabel->SetColor(GLVector3f(1, 0, 0));
 	// Add the GUILabel to the GUIContainer  
 	shared_ptr<GUIComponent> game_over_component
 		= static_pointer_cast<GUIComponent>(mGameOverLabel);
@@ -366,6 +370,8 @@ void Asteroids::CreateGUI()
 	mPlayerDataLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_MIDDLE);
 	// Set the visibility of the label to false (hidden)
 	mPlayerDataLabel->SetVisible(false);
+	// Set the color to green
+	mPlayerDataLabel->SetColor(GLVector3f(0, 1, 0));
 	// Add the GUILabel to the GUIContainer  
 	shared_ptr<GUIComponent> player_data_component
 		= static_pointer_cast<GUIComponent>(mPlayerDataLabel);
