@@ -142,13 +142,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		mScoreKeeper.ResetScore();
 		mPlayer.Resetlives();
 		mSpaceship->SelfDestroy();
-
-		isGameStart = true; // Set the flag indicating the game has started
-		mGameStartLabel->SetVisible(false); // Hide the game start label
-		mScoreLabel->SetVisible(true);
-		mLivesLabel->SetVisible(true);
-		// Create a spaceship and add it to the world
-		mGameWorld->AddObject(CreateSpaceship());
+		
+		HandleStartScreen();
 	}
 	else
 	{
@@ -442,6 +437,17 @@ shared_ptr<GameObject> Asteroids::CreateExplosion()
 	explosion->SetSprite(explosion_sprite);
 	explosion->Reset();
 	return explosion;
+}
+
+// Hnadle Start screen functionality
+void Asteroids::HandleStartScreen()
+{
+	isGameStart = true; // Set the flag indicating the game has started
+	mGameStartLabel->SetVisible(false); // Hide the game start label
+	mScoreLabel->SetVisible(true);
+	mLivesLabel->SetVisible(true);
+	// Create a spaceship and add it to the world
+	mGameWorld->AddObject(CreateSpaceship());
 }
 
 void Asteroids::RotateSpaceship(int value)

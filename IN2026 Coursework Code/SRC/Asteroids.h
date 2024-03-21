@@ -76,6 +76,7 @@ private:
 	void CreateGUI();
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
+	void HandleStartScreen();
 	void RotateSpaceship(int value);
 	void ShootAsteriod();
 
