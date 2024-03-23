@@ -76,6 +76,7 @@ void Asteroids::Start()
 	// Add this class as a listener of the player
 	mPlayer.AddListener(thisPtr);
 
+	// Demo scene functionality
 	mSpaceship->Thrust(2);
 	RotateSpaceship(90);
 	ShootAsteriod();
@@ -141,6 +142,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		isDemo = false;
 		mScoreKeeper.ResetScore();
 		mPlayer.Resetlives();
+		mLevel = 0;
 		mSpaceship->SelfDestroy();
 		
 		HandleStartScreen();
@@ -439,7 +441,7 @@ shared_ptr<GameObject> Asteroids::CreateExplosion()
 	return explosion;
 }
 
-// Hnadle Start screen functionality
+// Handle Start screen functionality
 void Asteroids::HandleStartScreen()
 {
 	isGameStart = true; // Set the flag indicating the game has started
@@ -450,6 +452,7 @@ void Asteroids::HandleStartScreen()
 	mGameWorld->AddObject(CreateSpaceship());
 }
 
+//Below function use to handle spaceship automatically in demo scene
 void Asteroids::RotateSpaceship(int value)
 {
 	if (!isDemo) return;
