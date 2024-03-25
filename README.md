@@ -14,7 +14,7 @@ Accompanied by stunning visuals and immersive sound effects, this asteroid shoot
    
 ![Part-2(1)](https://github.com/spyderaronica/AsteriodShootingGame/assets/91896971/1833663e-c171-46f1-9a60-e8f7c127f9c3)
 
-![Part-2(1)](https://github.com/spyderaronica/AsteriodShootingGame/assets/91896971/1833663e-c171-46f1-9a60-e8f7c127f9c3)
+![Screenshot 2024-03-17 111404](https://github.com/spyderaronica/AsteriodShootingGame/assets/91896971/8cb4f996-504d-44c1-acf9-b13d31145bb2)
    
 3. Demo scene
    
