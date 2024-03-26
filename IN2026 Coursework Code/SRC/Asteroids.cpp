@@ -77,7 +77,7 @@ void Asteroids::Start()
 	mPlayer.AddListener(thisPtr);
 
 	// Demo scene functionality
-	mSpaceship->Thrust(2);
+	MoveSpaceship(10);
 	RotateSpaceship(90);
 	ShootAsteriod();
 
@@ -144,7 +144,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		mPlayer.Resetlives();
 		mLevel = 0;
 		mSpaceship->SelfDestroy();
-		
+
 		HandleStartScreen();
 	}
 	else
@@ -467,4 +467,12 @@ void Asteroids::ShootAsteriod()
 
 	mSpaceship->Shoot();
 	SetTimer(700, SHOOT_ASTERIOD);
+}
+
+void Asteroids::MoveSpaceship(int value)
+{
+	if (!isDemo) return;
+
+	mSpaceship->Thrust(value);
+	SetTimer(500, MOVE_ASTERIOD);
 }

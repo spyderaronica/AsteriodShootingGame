@@ -57,9 +57,10 @@ void Spaceship::Render(void)
 void Spaceship::Thrust(float t)
 {
 	mThrust = t;
-	// Increase acceleration in the direction of ship
-	mAcceleration.x = mThrust * cos(DEG2RAD * mAngle);
-	mAcceleration.y = mThrust * sin(DEG2RAD * mAngle);
+
+	// Increase velocity in the direction of ship
+	mVelocity.x = mThrust * cos(DEG2RAD * mAngle);
+	mVelocity.y = mThrust * sin(DEG2RAD * mAngle);
 }
 
 /** Set the rotation. */

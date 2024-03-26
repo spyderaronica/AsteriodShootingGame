@@ -79,12 +79,14 @@ private:
 	void HandleStartScreen();
 	void RotateSpaceship(int value);
 	void ShootAsteriod();
+	void MoveSpaceship(int value);
 
 	const static uint SHOW_GAME_OVER = 0;
 	const static uint START_NEXT_LEVEL = 1;
 	const static uint CREATE_NEW_PLAYER = 2;
 	const static uint ROTATE_SPACESHIP = 3;
 	const static uint SHOOT_ASTERIOD = 4;
+	const static uint MOVE_ASTERIOD = 5;
 
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
